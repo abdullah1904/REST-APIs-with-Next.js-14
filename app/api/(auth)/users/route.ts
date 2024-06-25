@@ -7,7 +7,7 @@ export const GET = async ()=>{
     try{
         await connection();
         const user = await User.find();
-        return NextResponse.json(user,{status: 200});
+        return NextResponse.json({'message': 'OK','users': user},{status: 200});
     }
     catch(err:any){
         return new NextResponse(err.message,{status:500});
@@ -20,11 +20,11 @@ export const POST = async (req:Request)=>{
         if(!email || !username || !password){
             return NextResponse.json({'message': "Please fill all the fields"},{status:400});
         }
+        await connection();
         const checkUser = await User.findOne({email, username});
         if(checkUser){
             return NextResponse.json({'message': "User already exists"},{status:400});
         }
-        await connection();
         const user = await User.create({email, username, password});
         return NextResponse.json({"message":"User created successfully", user},{status:201});
     }
